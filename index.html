@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Dzwonków z Wibracją - 吹田南小学校</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .active-pulse {
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
+
+    <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-bell text-yellow-300 text-2xl animate-bounce"></i>
+                <div>
+                    <h1 class="font-bold text-xl md:text-2xl">Plan Dzwonków Szkolnych</h1>
+                    <p class="text-xs text-indigo-200">吹田南小学校 R4年度 日課表 (Szkoła Podstawowa Suita Minami)</p>
+                </div>
+            </div>
+
+            <!-- Live Clock & Date -->
+            <div class="flex items-center space-x-4 bg-indigo-800/60 px-4 py-2 rounded-xl backdrop-blur-sm border border-indigo-500/30">
+                <div class="text-right">
+                    <div id="live-clock" class="text-2xl md:text-3xl font-mono font-bold tracking-wider text-yellow-300">00:00:00</div>
+                    <div id="live-date" class="text-xs text-indigo-200">---, 00:00</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Sidebar Controls -->
+        <div class="space-y-6">
+            <!-- Audio & Vibration Enable Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-800">
+                    <i class="fa-solid fa-mobile-retro text-indigo-600"></i> Dzwonek i Wibracje
+                </h2>
+                
+                <div class="flex flex-col gap-4">
+                    <!-- Toggle System Power -->
+                    <button id="enable-system-btn" onclick="toggleAlarmSystem()" class="w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all duration-200 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white">
+                        <i id="system-icon" class="fa-solid fa-power-off"></i>
+                        <span id="system-btn-text">Włącz powiadomienia (Dźwięk + Wibracje)</span>
+                    </button>
+
+                    <div id="system-status-badge" class="text-xs text-center p-2.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Kliknij przycisk wyżej, aby aktywować audio i wibracje.
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <!-- Test Buttons -->
+                    <div class="space-y-2">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Testy urządzenia</p>
+                        
+                        <button onclick="triggerChimeWithVibration()" class="w-full py-2.5 px-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-bell font-bold"></i> Testuj Dzwonek + Wibracje
+                        </button>
+
+                        <button onclick="triggerVibrationOnly()" class="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-vibrate text-slate-500"></i> Testuj tylko Wibracje
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day Selector Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-800">
+                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> Wybór dnia
+                </h2>
+                
+                <div class="grid grid-cols-5 gap-2 mb-4">
+                    <button onclick="setSelectedDay(1)" id="day-btn-1" class="day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50">Pon<br><span class="text-xs text-slate-400">月</span></button>
+                    <button onclick="setSelectedDay(2)" id="day-btn-2" class="day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50">Wt<br><span class="text-xs text-slate-400">火</span></button>
+                    <button onclick="setSelectedDay(3)" id="day-btn-3" class="day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50">Śr<br><span class="text-xs text-slate-400">水</span></button>
+                    <button onclick="setSelectedDay(4)" id="day-btn-4" class="day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50">Czw<br><span class="text-xs text-slate-400">木</span></button>
+                    <button onclick="setSelectedDay(5)" id="day-btn-5" class="day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50">Pt<br><span class="text-xs text-slate-400">金</span></button>
+                </div>
+
+                <button onclick="autoSelectCurrentDay()" class="w-full py-2 text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate"></i> Ustaw dzisiejszy dzień automatycznie
+                </button>
+            </div>
+
+            <!-- Current / Upcoming Event Box -->
+            <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-md relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-indigo-800/40 text-8xl font-black pointer-events-none">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="relative z-10">
+                    <span class="text-xs uppercase font-bold tracking-widest text-indigo-300">Aktualny status</span>
+                    <h3 id="current-period-title" class="text-xl font-bold mt-1">Ładowanie...</h3>
+                    <p id="current-period-time" class="text-sm text-indigo-200 mt-1">--:-- - --:--</p>
+                    
+                    <hr class="border-indigo-700/60 my-4">
+
+                    <span class="text-xs uppercase font-bold tracking-widest text-indigo-300">Kolejny sygnał</span>
+                    <p id="next-bell-time" class="text-lg font-mono font-bold text-yellow-300 mt-1">--:--</p>
+                    <p id="next-bell-desc" class="text-xs text-indigo-200">Brak kolejnych dzwonków na dziś</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Schedule Table -->
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 id="schedule-title" class="text-xl font-bold text-slate-800">Plan zajęć</h2>
+                        <p id="schedule-subtitle" class="text-xs text-slate-500">Harmonogram sygnałów i dzwonków</p>
+                    </div>
+                    <span id="day-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 font-bold text-sm rounded-full">
+                        Poniedziałek (月)
+                    </span>
+                </div>
+
+                <!-- Schedule List -->
+                <div id="schedule-container" class="space-y-3">
+                    <!-- Rendered via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-300 transform translate-y-32 opacity-0 z-50">
+        <i class="fa-solid fa-bell text-yellow-400 text-xl animate-bounce"></i>
+        <div>
+            <div id="toast-title" class="font-bold text-sm">Dzwonek!</div>
+            <div id="toast-message" class="text-xs text-slate-300">Rozpoczęcie lekcji</div>
+        </div>
+    </div>
+
+    <script>
+        // Full timetable matching Suita Minami Elementary School schedule (吹田南小学校)
+        const scheduleData = {
+            // Monday (月)
+            1: [
+                { name: "朝の会 (Poranne spotkanie)", start: "08:30", end: "08:35", tag: "Spotkanie" },
+                { name: "モジュール学習 (Moduł - 読書/Czytanie)", start: "08:35", end: "08:50", tag: "Nauka" },
+                { name: "1時間目 (1. Lekcja)", start: "08:50", end: "09:35", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "09:35", end: "09:40", tag: "Przerwa" },
+                { name: "2時間目 (2. Lekcja)", start: "09:40", end: "10:25", tag: "Lekcja" },
+                { name: "業間 (Duża przerwa)", start: "10:25", end: "10:45", tag: "Przerwa" },
+                { name: "3時間目 (3. Lekcja)", start: "10:45", end: "11:30", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "11:30", end: "11:35", tag: "Przerwa" },
+                { name: "4時間目 (4. Lekcja)", start: "11:35", end: "12:20", tag: "Lekcja" },
+                { name: "給食 (Obiad)", start: "12:20", end: "13:05", tag: "Obiad" },
+                { name: "昼休み (Przerwa poobiednia)", start: "13:05", end: "13:20", tag: "Przerwa" },
+                { name: "清掃 (Sprzątanie)", start: "13:20", end: "13:35", tag: "Sprzątanie" },
+                { name: "休憩 (Przerwa)", start: "13:35", end: "13:40", tag: "Przerwa" },
+                { name: "5時間目 (5. Lekcja)", start: "13:40", end: "14:25", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "14:25", end: "14:35", tag: "Przerwa" },
+                { name: "6時間目 (6. Lekcja)", start: "14:35", end: "15:20", tag: "Lekcja" }
+            ],
+            // Tuesday (火)
+            2: [
+                { name: "朝の会 (Poranne spotkanie)", start: "08:30", end: "08:35", tag: "Spotkanie" },
+                { name: "モジュール学習 (Moduł - 国語/J.Japoński)", start: "08:35", end: "08:50", tag: "Nauka" },
+                { name: "1時間目 (1. Lekcja)", start: "08:50", end: "09:35", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "09:35", end: "09:40", tag: "Przerwa" },
+                { name: "2時間目 (2. Lekcja)", start: "09:40", end: "10:25", tag: "Lekcja" },
+                { name: "業間 (Duża przerwa)", start: "10:25", end: "10:45", tag: "Przerwa" },
+                { name: "3時間目 (3. Lekcja)", start: "10:45", end: "11:30", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "11:30", end: "11:35", tag: "Przerwa" },
+                { name: "4時間目 (4. Lekcja)", start: "11:35", end: "12:20", tag: "Lekcja" },
+                { name: "給食 (Obiad)", start: "12:20", end: "13:05", tag: "Obiad" },
+                { name: "昼休み (Przerwa poobiednia)", start: "13:05", end: "13:20", tag: "Przerwa" },
+                { name: "清掃 (Sprzątanie)", start: "13:20", end: "13:35", tag: "Sprzątanie" },
+                { name: "休憩 (Przerwa)", start: "13:35", end: "13:40", tag: "Przerwa" },
+                { name: "5時間目 (5. Lekcja)", start: "13:40", end: "14:25", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "14:25", end: "14:30", tag: "Przerwa" },
+                { name: "6時間目 (6. Lekcja wydłużona)", start: "14:30", end: "16:15", tag: "Lekcja" }
+            ],
+            // Wednesday (水)
+            3: [
+                { name: "朝の会 (Poranne spotkanie)", start: "08:30", end: "08:35", tag: "Spotkanie" },
+                { name: "モジュール学習 (Moduł - 朝会・読書/Apel i Czytanie)", start: "08:35", end: "08:50", tag: "Nauka" },
+                { name: "1時間目 (1. Lekcja)", start: "08:50", end: "09:35", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "09:35", end: "09:40", tag: "Przerwa" },
+                { name: "2時間目 (2. Lekcja)", start: "09:40", end: "10:25", tag: "Lekcja" },
+                { name: "業間 (Duża przerwa)", start: "10:25", end: "10:45", tag: "Przerwa" },
+                { name: "3時間目 (3. Lekcja)", start: "10:45", end: "11:30", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "11:30", end: "11:35", tag: "Przerwa" },
+                { name: "4時間目 (4. Lekcja)", start: "11:35", end: "12:20", tag: "Lekcja" },
+                { name: "給食 (Obiad)", start: "12:20", end: "13:05", tag: "Obiad" },
+                { name: "清掃 (Sprzątanie)", start: "13:05", end: "13:20", tag: "Sprzątanie" },
+                { name: "1〜3年下校 (Powrót klas 1-3 do domu)", start: "13:20", end: "13:20", tag: "Wyjście" },
+                { name: "5時間目 (5. Lekcja klas 4-6)", start: "13:20", end: "14:05", tag: "Lekcja" },
+                { name: "4〜6年下校 (Powrót klas 4-6 do domu)", start: "14:05", end: "14:05", tag: "Wyjście" }
+            ],
+            // Thursday (木)
+            4: [
+                { name: "朝の会 (Poranne spotkanie)", start: "08:30", end: "08:35", tag: "Spotkanie" },
+                { name: "モジュール学習 (Moduł - 国語/J.Japoński)", start: "08:35", end: "08:50", tag: "Nauka" },
+                { name: "1時間目 (1. Lekcja)", start: "08:50", end: "09:35", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "09:35", end: "09:40", tag: "Przerwa" },
+                { name: "2時間目 (2. Lekcja)", start: "09:40", end: "10:25", tag: "Lekcja" },
+                { name: "業間 (Duża przerwa)", start: "10:25", end: "10:45", tag: "Przerwa" },
+                { name: "3時間目 (3. Lekcja)", start: "10:45", end: "11:30", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "11:30", end: "11:35", tag: "Przerwa" },
+                { name: "4時間目 (4. Lekcja)", start: "11:35", end: "12:20", tag: "Lekcja" },
+                { name: "給食 (Obiad)", start: "12:20", end: "13:05", tag: "Obiad" },
+                { name: "昼休み (Przerwa poobiednia)", start: "13:05", end: "13:20", tag: "Przerwa" },
+                { name: "清掃 (Sprzątanie)", start: "13:20", end: "13:35", tag: "Sprzątanie" },
+                { name: "休憩 (Przerwa)", start: "13:35", end: "13:40", tag: "Przerwa" },
+                { name: "5時間目 (5. Lekcja)", start: "13:40", end: "14:25", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "14:25", end: "14:30", tag: "Przerwa" },
+                { name: "6時間目 (6. Lekcja)", start: "14:30", end: "15:15", tag: "Lekcja" }
+            ],
+            // Friday (金)
+            5: [
+                { name: "朝の会 (Poranne spotkanie)", start: "08:30", end: "08:35", tag: "Spotkanie" },
+                { name: "モジュール学習 (Moduł - 国語/J.Japoński)", start: "08:35", end: "08:50", tag: "Nauka" },
+                { name: "1時間目 (1. Lekcja)", start: "08:50", end: "09:35", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "09:35", end: "09:40", tag: "Przerwa" },
+                { name: "2時間目 (2. Lekcja)", start: "09:40", end: "10:25", tag: "Lekcja" },
+                { name: "業間 (Duża przerwa)", start: "10:25", end: "10:45", tag: "Przerwa" },
+                { name: "3時間目 (3. Lekcja)", start: "10:45", end: "11:30", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "11:30", end: "11:35", tag: "Przerwa" },
+                { name: "4時間目 (4. Lekcja)", start: "11:35", end: "12:20", tag: "Lekcja" },
+                { name: "給食 (Obiad)", start: "12:20", end: "13:05", tag: "Obiad" },
+                { name: "昼休み (Przerwa poobiednia)", start: "13:05", end: "13:20", tag: "Przerwa" },
+                { name: "清掃 (Sprzątanie)", start: "13:20", end: "13:35", tag: "Sprzątanie" },
+                { name: "休憩 (Przerwa)", start: "13:35", end: "13:40", tag: "Przerwa" },
+                { name: "5時間目 (5. Lekcja)", start: "13:40", end: "14:25", tag: "Lekcja" },
+                { name: "休憩 (Przerwa)", start: "14:25", end: "14:30", tag: "Przerwa" },
+                { name: "6時間目 (6. Lekcja)", start: "14:30", end: "15:15", tag: "Lekcja" }
+            ]
+        };
+
+        const dayNamesPL = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+        const dayNamesJP = ["日", "月", "火", "水", "木", "金", "土"];
+
+        let currentSelectedDay = 1;
+        let alarmSystemActive = false;
+        let audioCtx = null;
+        let lastPlayedTime = "";
+
+        // Web Audio API initialization
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Play individual chime note
+        function playNote(freq, startTime, duration) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
+
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.35, startTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // Play Westminster Chime sequence
+        function playChimeSound() {
+            initAudio();
+            const now = audioCtx.currentTime;
+            
+            const E5 = 659.25;
+            const C5 = 523.25;
+            const D5 = 587.33;
+            const G4 = 392.00;
+            const tempo = 0.6;
+
+            playNote(E5, now, 1.2);
+            playNote(C5, now + tempo, 1.2);
+            playNote(D5, now + tempo * 2, 1.2);
+            playNote(G4, now + tempo * 3, 2.5);
+        }
+
+        // Trigger vibration pattern using navigator.vibrate API
+        function triggerVibration() {
+            if ("vibrate" in navigator) {
+                // Synchronized vibration pattern: [vibrate, pause, vibrate, pause...]
+                // Pattern matches Westminster chime beats: 4 beats + long accent
+                navigator.vibrate([400, 200, 400, 200, 400, 200, 800]);
+            } else {
+                console.warn("Vibration API is not supported on this device/browser.");
+            }
+        }
+
+        // Trigger both Chime Sound and Vibration
+        function triggerChimeWithVibration() {
+            playChimeSound();
+            triggerVibration();
+            
+            if (!("vibrate" in navigator)) {
+                showToast("Dzwonek odtworzony", "Uwaga: Twoja przeglądarka/urządzenie nie obsługuje wibracji.");
+            } else {
+                showToast("Dzwonek + Wibracja", "Odtworzono dźwięk oraz sekwencję wibracji.");
+            }
+        }
+
+        // Trigger only Vibration
+        function triggerVibrationOnly() {
+            if ("vibrate" in navigator) {
+                navigator.vibrate([500, 250, 500, 250, 1000]);
+                showToast("Wibracje", "Wysłano sygnał wibracji do urządzenia.");
+            } else {
+                showToast("Brak obsługi wibracji", "Twoja przeglądarka lub urządzenie nie wspiera API navigator.vibrate.");
+            }
+        }
+
+        // Toggle entire Alarm System
+        function toggleAlarmSystem() {
+            initAudio();
+            alarmSystemActive = !alarmSystemActive;
+            
+            const btn = document.getElementById("enable-system-btn");
+            const btnText = document.getElementById("system-btn-text");
+            const btnIcon = document.getElementById("system-icon");
+            const badge = document.getElementById("system-status-badge");
+
+            if (alarmSystemActive) {
+                btn.className = "w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all duration-200 shadow-md bg-rose-600 hover:bg-rose-700 text-white";
+                btnText.innerText = "Wyłącz powiadomienia";
+                btnIcon.className = "fa-solid fa-power-off";
+                
+                const hasVib = "vibrate" in navigator ? "Dźwięk + Wibracje aktywne." : "Dźwięk aktywny (Brak wibracji w tym urządzeniu).";
+                badge.className = "text-xs text-center p-2.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center gap-2";
+                badge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> ${hasVib}`;
+                
+                showToast("System Aktywny", "Dzwonek i wibracje zostaną wyzwolone automatycznie o czasie.");
+            } else {
+                btn.className = "w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all duration-200 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white";
+                btnText.innerText = "Włącz powiadomienia (Dźwięk + Wibracje)";
+                btnIcon.className = "fa-solid fa-power-off";
+                badge.className = "text-xs text-center p-2.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center gap-2";
+                badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Kliknij przycisk wyżej, aby aktywować audio i wibracje.`;
+            }
+        }
+
+        function setSelectedDay(dayNum) {
+            currentSelectedDay = dayNum;
+
+            document.querySelectorAll('.day-btn').forEach((btn, idx) => {
+                if (idx + 1 === dayNum) {
+                    btn.className = "day-btn py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-md border border-indigo-600";
+                } else {
+                    btn.className = "day-btn py-2 text-sm font-bold rounded-xl border border-slate-200 hover:bg-indigo-50 text-slate-700";
+                }
+            });
+
+            document.getElementById("day-badge").innerText = `${dayNamesPL[dayNum]} (${dayNamesJP[dayNum]})`;
+            
+            renderSchedule();
+            updateCurrentAndNextStatus();
+        }
+
+        function autoSelectCurrentDay() {
+            const today = new Date().getDay();
+            if (today >= 1 && today <= 5) {
+                setSelectedDay(today);
+            } else {
+                setSelectedDay(1); // Default to Monday
+            }
+        }
+
+        function getTagBadge(tag) {
+            switch(tag) {
+                case "Lekcja": return `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Lekcja</span>`;
+                case "Przerwa": return `<span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">Przerwa</span>`;
+                case "Obiad": return `<span class="bg-orange-100 text-orange-800 text-xs font-semibold px-2.5 py-0.5 rounded">Obiad</span>`;
+                case "Sprzątanie": return `<span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-0.5 rounded">Sprzątanie</span>`;
+                case "Wyjście": return `<span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Powrót do domu</span>`;
+                default: return `<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">${tag}</span>`;
+            }
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById("schedule-container");
+            const list = scheduleData[currentSelectedDay] || [];
+            
+            container.innerHTML = "";
+
+            const now = new Date();
+            const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            list.forEach((item, index) => {
+                const isInstant = item.start === item.end;
+                const isActive = !isInstant && currentTimeStr >= item.start && currentTimeStr < item.end && (now.getDay() === currentSelectedDay);
+
+                const card = document.createElement("div");
+                card.className = `p-4 rounded-xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                    isActive 
+                        ? 'bg-indigo-50 border-indigo-400 active-pulse shadow-sm' 
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-800 flex items-center gap-2">
+                                ${item.name}
+                                ${isActive ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Trwa teraz</span>' : ''}
+                            </div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                ${getTagBadge(item.tag)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right flex items-center justify-between sm:justify-end gap-3 border-t sm:border-0 pt-2 sm:pt-0 border-slate-100">
+                        <div class="font-mono text-sm font-bold text-slate-700">
+                            ${isInstant ? `<i class="fa-solid fa-bell text-yellow-500"></i> ${item.start}` : `<i class="fa-regular fa-clock text-slate-400"></i> ${item.start} - ${item.end}`}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById("live-clock").innerText = `${hours}:${minutes}:${seconds}`;
+            
+            const currentDayPL = dayNamesPL[now.getDay()];
+            const dayNum = now.getDate();
+            const month = now.getMonth() + 1;
+            document.getElementById("live-date").innerText = `${currentDayPL}, ${dayNum}.${month < 10 ? '0' + month : month}`;
+
+            const timeHHMM = `${hours}:${minutes}`;
+
+            checkAndTriggerBell(timeHHMM, seconds, now.getDay());
+
+            if (seconds === "00") {
+                renderSchedule();
+                updateCurrentAndNextStatus();
+            }
+        }
+
+        function checkAndTriggerBell(timeHHMM, seconds, actualDay) {
+            if (actualDay !== currentSelectedDay) return;
+            if (seconds !== "00") return;
+            if (lastPlayedTime === timeHHMM) return;
+
+            const list = scheduleData[currentSelectedDay] || [];
+            let triggerEvent = null;
+
+            for (let item of list) {
+                if (item.start === timeHHMM) {
+                    triggerEvent = { time: item.start, name: item.name, type: "Rozpoczęcie" };
+                    break;
+                } else if (item.end === timeHHMM && item.start !== item.end) {
+                    triggerEvent = { time: item.end, name: item.name, type: "Koniec" };
+                    break;
+                }
+            }
+
+            if (triggerEvent) {
+                lastPlayedTime = timeHHMM;
+                showToast(`Dzwonek! (${triggerEvent.time})`, `${triggerEvent.type}: ${triggerEvent.name}`);
+                
+                if (alarmSystemActive) {
+                    triggerChimeWithVibration();
+                }
+            }
+        }
+
+        function updateCurrentAndNextStatus() {
+            const list = scheduleData[currentSelectedDay] || [];
+            const now = new Date();
+            const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            let currentItem = null;
+            let nextBellTime = null;
+            let nextBellDesc = "";
+
+            if (now.getDay() === currentSelectedDay) {
+                for (let i = 0; i < list.length; i++) {
+                    const item = list[i];
+                    if (currentTimeStr >= item.start && currentTimeStr < item.end) {
+                        currentItem = item;
+                    }
+
+                    if (!nextBellTime) {
+                        if (currentTimeStr < item.start) {
+                            nextBellTime = item.start;
+                            nextBellDesc = `Początek: ${item.name}`;
+                        } else if (currentTimeStr < item.end && item.start !== item.end) {
+                            nextBellTime = item.end;
+                            nextBellDesc = `Koniec: ${item.name}`;
+                        }
+                    }
+                }
+            }
+
+            const titleElem = document.getElementById("current-period-title");
+            const timeElem = document.getElementById("current-period-time");
+            const nextTimeElem = document.getElementById("next-bell-time");
+            const nextDescElem = document.getElementById("next-bell-desc");
+
+            if (currentItem) {
+                titleElem.innerText = currentItem.name;
+                timeElem.innerText = `${currentItem.start} - ${currentItem.end}`;
+            } else {
+                titleElem.innerText = "Poza godzinami lekcyjnymi";
+                timeElem.innerText = "Brak aktywnych zajęć";
+            }
+
+            if (nextBellTime) {
+                nextTimeElem.innerText = nextBellTime;
+                nextDescElem.innerText = nextBellDesc;
+            } else {
+                nextTimeElem.innerText = "--:--";
+                nextDescElem.innerText = "Brak kolejnych dzwonków w wybranym dniu";
+            }
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-title").innerText = title;
+            document.getElementById("toast-message").innerText = message;
+
+            toast.classList.remove("translate-y-32", "opacity-0");
+            toast.classList.add("translate-y-0", "opacity-100");
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-0", "opacity-100");
+                toast.classList.add("translate-y-32", "opacity-0");
+            }, 5000);
+        }
+
+        window.onload = function() {
+            autoSelectCurrentDay();
+            setInterval(updateClock, 1000);
+            updateClock();
+        };
+    </script>
+</body>
+</html>
