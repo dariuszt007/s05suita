@@ -231,7 +231,7 @@
 
     <script>
         // DOMYŚLNY HARMONOGRAM DZWONKÓW (zgodny z życzeniem)
-        cconst WEEK_SCHEDULES = {
+        const WEEK_SCHEDULES = {
 1: [ // Poniedziałek
 { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:00', end: '08:45' },
 { id: 2, type: 'break', name: 'Przerwa', start: '08:45', end: '08:55' },
@@ -572,16 +572,18 @@ return;
             }
 
             schedule = updated;
-            localStorage.setItem('bell_schedule', JSON.stringify(schedule));
+            localStorage.setItem(
+'week_schedules',
+JSON.stringify(WEEK_SCHEDULES)
+);
             toggleEditModal();
             updateApp();
         }
 
         function resetScheduleToDefault() {
-            schedule = DEFAULT_SCHEDULE;
-            localStorage.removeItem('bell_schedule');
-            updateApp();
-        }
+localStorage.removeItem('bell_schedule');
+updateApp();
+}
 
         function toggleTheme() {
             const html = document.documentElement;
