@@ -67,36 +67,15 @@
                     <button onclick="changeLanguage('ja')" id="langBtn-ja" class="px-2.5 py-1 text-xs font-bold rounded-lg transition">JP</button>
                     <button onclick="changeLanguage('en')" id="langBtn-en" class="px-2.5 py-1 text-xs font-bold rounded-lg transition">EN</button>
                 </div>
-
-                <!-- Theme toggle button
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
-                    <i id="themeIcon" class="fa-solid fa-sun"></i>
-                </button>
-
-                 Simulation mode modal trigger 
-                <button onclick="toggleSimModal()" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition flex items-center gap-2 shadow-md">
-                    <i class="fa-solid fa-flask"></i>
-                    <span id="simBtnText" class="hidden sm:inline">Symulator czasu</span>
-                </button>-->
             </div>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
 
-        <!-- Banner symulacji czasu jeśli aktywna -->
-        <div id="simBanner" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-4 py-2.5 rounded-xl flex items-center justify-between">
-            <div class="flex items-center gap-2 text-sm font-medium">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span><span id="simActiveText">Tryb symulacji czasu aktywny! Zegar:</span> <strong id="simTimeDisplay">--:--:--</strong></span>
-            </div>
-            <button onclick="resetSimulation()" id="simResetBtn" class="text-xs bg-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-400 transition">
-                Przywróć czas rzeczywisty
-            </button>
-        </div>
-
-        <!-- SEKCJA 1: STAN OBECNY -->
+        <!-- SEKCJA 1: STAN OBECNY (PROMINENTNY WYŚWIETLACZ NA SAMEJ GÓRZE) -->
         <section id="statusCard" class="relative overflow-hidden rounded-3xl bg-slate-800/90 border-2 border-slate-700 p-6 sm:p-8 shadow-2xl transition-all duration-300">
+            <!-- Tło ozdobne z gradientem -->
             <div id="statusGlow" class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -189,43 +168,6 @@
 
     </main>
 
-    <!-- MODAL: Symulator Czasu -->
-    <div id="simModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modalSimTitle" class="text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-flask text-indigo-400"></i> Symulator Czasu
-                </h3>
-                <button onclick="toggleSimModal()" class="text-slate-400 hover:text-white text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <p id="modalSimDesc" class="text-xs text-slate-300 mb-4">
-                Ustaw sztuczny czas i dzień tygodnia, aby przetestować działanie aplikacji.
-            </p>
-            <div class="space-y-4">
-                <div>
-                    <label id="labelSimDay" class="block text-xs font-medium text-slate-300 mb-1">Dzień tygodnia:</label>
-                    <select id="simDayInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <!-- Generowane dynamicznie wg języka -->
-                    </select>
-                </div>
-                <div>
-                    <label id="labelSimTime" class="block text-xs font-medium text-slate-300 mb-1">Godzina symulacji:</label>
-                    <input type="time" id="simTimeInput" step="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="applySimulation()" id="btnSimApply" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition text-sm">
-                        Zastosuj czas
-                    </button>
-                    <button onclick="resetSimulation()" id="btnSimReset" class="px-4 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 rounded-xl transition text-sm">
-                        Reset
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         System Sygnalizacji i Harmonogramu Dzwonków Szkolnych &copy; 2026
@@ -238,9 +180,6 @@
         const I18N = {
             pl: {
                 headerSubtitle: 'Harmonogram & Status na żywo',
-                simBtnText: 'Symulator czasu',
-                simActiveText: 'Tryb symulacji czasu aktywny! Zegar:',
-                simResetBtn: 'Przywróć czas rzeczywisty',
                 labelCurrentTime: 'Aktualny czas',
                 labelCountdown: 'Pozostało do końca:',
                 sectionScheduleTitle: 'Plan Dzwonków Szkolnych',
@@ -249,12 +188,6 @@
                 thTime: 'Czas trwania',
                 thDuration: 'Długość',
                 thStatus: 'Status',
-                modalSimTitle: 'Symulator Czasu',
-                modalSimDesc: 'Ustaw sztuczny czas i dzień tygodnia, aby przetestować działanie aplikacji.',
-                labelSimDay: 'Dzień tygodnia:',
-                labelSimTime: 'Godzina symulacji:',
-                btnSimApply: 'Zastosuj czas',
-                btnSimReset: 'Reset',
                 statusNow: 'TERAZ',
                 nextBell: 'Następny dzwonek:',
                 firstBell: 'Pierwszy dzwonek:',
@@ -304,9 +237,6 @@
 
             ja: {
                 headerSubtitle: 'チャイム運行スケジュール＆リアルタイム状況',
-                simBtnText: '時間シミュレーター',
-                simActiveText: '時間シミュレーションモード稼iod中！ 時計:',
-                simResetBtn: 'リアルタイムに戻す',
                 labelCurrentTime: '現在時刻',
                 labelCountdown: '終了まで残り時間:',
                 sectionScheduleTitle: '日日課・日課表',
@@ -315,12 +245,6 @@
                 thTime: '時間帯',
                 thDuration: '時間',
                 thStatus: '状態',
-                modalSimTitle: '時間シミュレーター',
-                modalSimDesc: '設定した曜日や時間での挙動をテストできます。',
-                labelSimDay: '曜日:',
-                labelSimTime: '設定時刻:',
-                btnSimApply: '適用',
-                btnSimReset: 'リセット',
                 statusNow: '現在',
                 nextBell: '次のチャイム:',
                 firstBell: '予鈴・始業チャイム:',
@@ -370,9 +294,6 @@
 
             en: {
                 headerSubtitle: 'Live Bell Schedule & Status',
-                simBtnText: 'Time Simulator',
-                simActiveText: 'Simulation mode active! Clock:',
-                simResetBtn: 'Restore Real Time',
                 labelCurrentTime: 'Current Time',
                 labelCountdown: 'Time Remaining:',
                 sectionScheduleTitle: 'School Bell Schedule',
@@ -381,12 +302,6 @@
                 thTime: 'Time Slot',
                 thDuration: 'Duration',
                 thStatus: 'Status',
-                modalSimTitle: 'Time Simulator',
-                modalSimDesc: 'Set custom time and day to test application status.',
-                labelSimDay: 'Day of week:',
-                labelSimTime: 'Simulation time:',
-                btnSimApply: 'Apply Time',
-                btnSimReset: 'Reset',
                 statusNow: 'NOW',
                 nextBell: 'Next Bell:',
                 firstBell: 'First Bell:',
@@ -437,7 +352,6 @@
 
         let currentLang = localStorage.getItem('app_lang') || 'pl';
 
-        // Helper dla wielojęzycznych nazw bloków
         function getBlockName(item, lang) {
             if (typeof item.name === 'object') {
                 return item.name[lang] || item.name['pl'] || '';
@@ -446,9 +360,10 @@
         }
 
         // =========================================================================
-        // HARMONOGRAMY LOKALIZOWANE (PL / JA / EN)
+        // PLAN DLA KAŻDEGO DNIA TYGODNIA
         // =========================================================================
 
+        // --- PONIEDZIAŁEK ---
         const BASE_SCHEDULE_MON = [
             { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
@@ -463,6 +378,7 @@
             { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:35', end: '15:20' }
         ];
 
+        // --- WTOREK ---
         const BASE_SCHEDULE_TUE = [
             { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
@@ -477,6 +393,7 @@
             { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
+        // --- ŚRODA ---
         const BASE_SCHEDULE_WED = [
             { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
@@ -487,6 +404,7 @@
             { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' }
         ];
 
+        // --- CZWARTEK ---
         const BASE_SCHEDULE_THU = [
             { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
@@ -501,6 +419,7 @@
             { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
+        // --- PIĄTEK ---
         const BASE_SCHEDULE_FRI = [
             { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
@@ -515,6 +434,7 @@
             { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
+        // MAPOWANIE DNI TYGODNIA (1 = Pon, 2 = Wt, ..., 5 = Pt)
         const WEEKLY_SCHEDULE = {
             1: BASE_SCHEDULE_MON,
             2: BASE_SCHEDULE_TUE,
@@ -524,9 +444,6 @@
         };
 
         // Stan aplikacji
-        let isSimulating = false;
-        let simulatedTimeOffset = 0; 
-        let simulatedDay = null;     
         let previousStatusId = null; 
         let selectedDayView = null;  
 
@@ -537,16 +454,10 @@
         }
 
         function getAppDate() {
-            if (isSimulating) {
-                return new Date(Date.now() + simulatedTimeOffset);
-            }
             return new Date();
         }
 
         function getAppDayOfWeek() {
-            if (isSimulating && simulatedDay !== null) {
-                return simulatedDay;
-            }
             return new Date().getDay();
         }
 
@@ -570,18 +481,17 @@
             // Przycisk aktywny w selectorze
             ['pl', 'ja', 'en'].forEach(l => {
                 const btn = document.getElementById(`langBtn-${l}`);
-                if (l === currentLang) {
-                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow';
-                } else {
-                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition text-slate-400 hover:text-white';
+                if (btn) {
+                    if (l === currentLang) {
+                        btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow';
+                    } else {
+                        btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition text-slate-400 hover:text-white';
+                    }
                 }
             });
 
             // Teksty statyczne w UI
             document.getElementById('headerSubtitle').textContent = txt.headerSubtitle;
-            document.getElementById('simBtnText').textContent = txt.simBtnText;
-            document.getElementById('simActiveText').textContent = txt.simActiveText;
-            document.getElementById('simResetBtn').textContent = txt.simResetBtn;
             document.getElementById('labelCurrentTime').textContent = txt.labelCurrentTime;
             document.getElementById('labelCountdown').textContent = txt.labelCountdown;
             document.getElementById('sectionScheduleTitle').innerHTML = `<i class="fa-solid fa-calendar-days text-blue-400"></i> ${txt.sectionScheduleTitle}`;
@@ -590,27 +500,6 @@
             document.getElementById('thTime').textContent = txt.thTime;
             document.getElementById('thDuration').textContent = txt.thDuration;
             document.getElementById('thStatus').textContent = txt.thStatus;
-
-            document.getElementById('modalSimTitle').innerHTML = `<i class="fa-solid fa-flask text-indigo-400"></i> ${txt.modalSimTitle}`;
-            document.getElementById('modalSimDesc').textContent = txt.modalSimDesc;
-            document.getElementById('labelSimDay').textContent = txt.labelSimDay;
-            document.getElementById('labelSimTime').textContent = txt.labelSimTime;
-            document.getElementById('btnSimApply').textContent = txt.btnSimApply;
-            document.getElementById('btnSimReset').textContent = txt.btnSimReset;
-
-            // Opcje dni tygodnia w symulatorze
-            const simSelect = document.getElementById('simDayInput');
-            const currentVal = simSelect.value || '1';
-            simSelect.innerHTML = `
-                <option value="1">${txt.days[1]}</option>
-                <option value="2">${txt.days[2]}</option>
-                <option value="3">${txt.days[3]}</option>
-                <option value="4">${txt.days[4]}</option>
-                <option value="5">${txt.days[5]}</option>
-                <option value="6">${txt.days[6]}</option>
-                <option value="0">${txt.days[0]}</option>
-            `;
-            simSelect.value = currentVal;
         }
 
         function renderScheduleTable(currentBlockId, currentDay) {
@@ -620,7 +509,6 @@
 
             const viewDay = selectedDayView || (currentDay >= 1 && currentDay <= 5 ? currentDay : 1);
 
-            // Aktualizacja zakładek dni
             for (let day = 1; day <= 5; day++) {
                 const tabBtn = document.getElementById(`tab-day-${day}`);
                 if (tabBtn) {
@@ -690,10 +578,6 @@
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
             document.getElementById('clockDisplay').textContent = `${hours}:${minutes}:${seconds}`;
-
-            if (isSimulating) {
-                document.getElementById('simTimeDisplay').textContent = `${hours}:${minutes}:${seconds}`;
-            }
 
             // Data wg języka
             if (currentLang === 'ja') {
@@ -819,67 +703,6 @@
             setTimeout(() => {
                 card.classList.remove('status-alert');
             }, 4000);
-        }
-
-        // --- FUNKCJE SYMULATORA CZASU ---
-
-        function toggleSimModal() {
-            const modal = document.getElementById('simModal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                const now = getAppDate();
-                const h = now.getHours().toString().padStart(2, '0');
-                const m = now.getMinutes().toString().padStart(2, '0');
-                const s = now.getSeconds().toString().padStart(2, '0');
-                document.getElementById('simTimeInput').value = `${h}:${m}:${s}`;
-                document.getElementById('simDayInput').value = getAppDayOfWeek().toString();
-            }
-        }
-
-        function applySimulation() {
-            const timeVal = document.getElementById('simTimeInput').value;
-            const dayVal = parseInt(document.getElementById('simDayInput').value, 10);
-
-            if (!timeVal) return;
-
-            const [h, m, s] = timeVal.split(':').map(Number);
-            const targetDate = new Date();
-            targetDate.setHours(h, m, s || 0, 0);
-
-            simulatedTimeOffset = targetDate.getTime() - Date.now();
-            simulatedDay = dayVal;
-            isSimulating = true;
-
-            if (dayVal >= 1 && dayVal <= 5) {
-                selectedDayView = dayVal;
-            }
-
-            document.getElementById('simBanner').classList.remove('hidden');
-            toggleSimModal();
-            updateApp();
-        }
-
-        function resetSimulation() {
-            isSimulating = false;
-            simulatedTimeOffset = 0;
-            simulatedDay = null;
-            selectedDayView = null;
-            document.getElementById('simBanner').classList.add('hidden');
-            updateApp();
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                icon.className = 'fa-solid fa-moon';
-                document.body.className = 'bg-slate-100 text-slate-900 min-h-screen flex flex-col transition-colors duration-300';
-            } else {
-                html.classList.add('dark');
-                icon.className = 'fa-solid fa-sun';
-                document.body.className = 'bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-300';
-            }
         }
 
         // Start pętli zegara
