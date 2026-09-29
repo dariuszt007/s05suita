@@ -49,28 +49,36 @@
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center flex-wrap gap-3">
             <div class="flex items-center gap-3">
                 <div class="p-2 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/30">
                     <i class="fa-solid font-bold fa-bell text-xl"></i>
                 </div>
                 <div>
                     <h1 class="font-bold text-lg leading-tight">吹田南小学校</h1>
-                    <p class="text-xs text-slate-400">Harmonogram & Status na żywo</p>
+                    <p id="headerSubtitle" class="text-xs text-slate-400">Harmonogram & Status na żywo</p>
                 </div>
             </div>
             
-            <!-- <div class="flex items-center gap-2"> -->
-                <!-- Theme toggle button 
+            <div class="flex items-center gap-2">
+                <!-- Selector języków -->
+                <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700/80">
+                    <button onclick="changeLanguage('pl')" id="langBtn-pl" class="px-2.5 py-1 text-xs font-bold rounded-lg transition">PL</button>
+                    <button onclick="changeLanguage('ja')" id="langBtn-ja" class="px-2.5 py-1 text-xs font-bold rounded-lg transition">JP</button>
+                    <button onclick="changeLanguage('en')" id="langBtn-en" class="px-2.5 py-1 text-xs font-bold rounded-lg transition">EN</button>
+                </div>
+
+                <!-- Theme toggle button
                 <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
                     <i id="themeIcon" class="fa-solid fa-sun"></i>
-                </button> -->
-                <!-- Simulation mode modal trigger 
+                </button>
+
+                 Simulation mode modal trigger 
                 <button onclick="toggleSimModal()" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition flex items-center gap-2 shadow-md">
                     <i class="fa-solid fa-flask"></i>
-                    <span class="hidden sm:inline">Symulator czasu</span>
-                </button>
-            </div> -->
+                    <span id="simBtnText" class="hidden sm:inline">Symulator czasu</span>
+                </button>-->
+            </div>
         </div>
     </header>
 
@@ -80,28 +88,27 @@
         <div id="simBanner" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-4 py-2.5 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-2 text-sm font-medium">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <span>Tryb symulacji czasu aktywny! Zegar: <strong id="simTimeDisplay">--:--:--</strong></span>
+                <span><span id="simActiveText">Tryb symulacji czasu aktywny! Zegar:</span> <strong id="simTimeDisplay">--:--:--</strong></span>
             </div>
-            <button onclick="resetSimulation()" class="text-xs bg-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-400 transition">
+            <button onclick="resetSimulation()" id="simResetBtn" class="text-xs bg-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-400 transition">
                 Przywróć czas rzeczywisty
             </button>
         </div>
 
-        <!-- SEKCJA 1: STAN OBECNY (PROMINENTNY WYŚWIETLACZ NA SAMEJ GÓRZE) -->
+        <!-- SEKCJA 1: STAN OBECNY -->
         <section id="statusCard" class="relative overflow-hidden rounded-3xl bg-slate-800/90 border-2 border-slate-700 p-6 sm:p-8 shadow-2xl transition-all duration-300">
-            <!-- Tło ozdobne z gradientem -->
             <div id="statusGlow" class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                 
                 <!-- Zegar cyfrowy i data -->
                 <div class="md:col-span-5 flex flex-col justify-center items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-slate-700/60 pb-6 md:pb-0 md:pr-6">
-                    <span class="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Aktualny czas</span>
+                    <span id="labelCurrentTime" class="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Aktualny czas</span>
                     <div id="clockDisplay" class="text-4xl sm:text-5xl font-black tracking-tight text-slate-100 font-mono my-1">
                         00:00:00
                     </div>
                     <div id="dateDisplay" class="text-xs sm:text-sm text-slate-400 font-medium">
-                        Poniedziałek, 1 stycznia
+                        --
                     </div>
                 </div>
 
@@ -110,26 +117,26 @@
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                                Weryfikowanie...
+                                ...
                             </span>
                             <span id="nextBellTime" class="text-xs font-semibold text-slate-400">
-                                Następny dzwonek: --:--
+                                --
                             </span>
                         </div>
                         
                         <h2 id="statusTitle" class="text-2xl sm:text-3xl font-extrabold text-white mb-2">
-                            Ładowanie harmonogramu...
+                            ...
                         </h2>
                         
                         <p id="statusSubtitle" class="text-slate-300 text-sm mb-4">
-                            Proszę czekać na synchronizację zegara.
+                            ...
                         </p>
                     </div>
 
                     <!-- Odliczanie czasu do zmiany stanu -->
                     <div class="mt-2 bg-slate-900/60 rounded-2xl p-4 border border-slate-700/50">
                         <div class="flex justify-between items-end mb-2">
-                            <span class="text-xs font-medium text-slate-400">Pozostało do końca:</span>
+                            <span id="labelCountdown" class="text-xs font-medium text-slate-400">Pozostało do końca:</span>
                             <span id="countdownDisplay" class="text-2xl font-bold font-mono text-emerald-400">00:00</span>
                         </div>
                         <!-- Pasek postępu -->
@@ -146,10 +153,10 @@
         <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <h3 id="sectionScheduleTitle" class="text-xl font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calendar-days text-blue-400"></i> Plan Dzwonków Szkolnych
                     </h3>
-                    <p class="text-xs text-slate-400">Oficjalny harmonogram lekcji i przerw</p>
+                    <p id="sectionScheduleSub" class="text-xs text-slate-400">Oficjalny harmonogram lekcji i przerw</p>
                 </div>
             </div>
 
@@ -167,10 +174,10 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-900/80 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-700/80">
-                            <th class="py-3 px-4 font-semibold">Lp / Blok</th>
-                            <th class="py-3 px-4 font-semibold">Czas trwania</th>
-                            <th class="py-3 px-4 font-semibold">Długość</th>
-                            <th class="py-3 px-4 font-semibold text-right">Status</th>
+                            <th id="thBlock" class="py-3 px-4 font-semibold">Lp / Blok</th>
+                            <th id="thTime" class="py-3 px-4 font-semibold">Czas trwania</th>
+                            <th id="thDuration" class="py-3 px-4 font-semibold">Długość</th>
+                            <th id="thStatus" class="py-3 px-4 font-semibold text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody id="scheduleTableBody" class="divide-y divide-slate-700/50 text-sm">
@@ -186,38 +193,32 @@
     <div id="simModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <h3 id="modalSimTitle" class="text-lg font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-flask text-indigo-400"></i> Symulator Czasu
                 </h3>
                 <button onclick="toggleSimModal()" class="text-slate-400 hover:text-white text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <p class="text-xs text-slate-300 mb-4">
+            <p id="modalSimDesc" class="text-xs text-slate-300 mb-4">
                 Ustaw sztuczny czas i dzień tygodnia, aby przetestować działanie aplikacji.
             </p>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Dzień tygodnia:</label>
+                    <label id="labelSimDay" class="block text-xs font-medium text-slate-300 mb-1">Dzień tygodnia:</label>
                     <select id="simDayInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="1">Poniedziałek</option>
-                        <option value="2">Wtorek</option>
-                        <option value="3">Środa</option>
-                        <option value="4">Czwartek</option>
-                        <option value="5">Piątek</option>
-                        <option value="6">Sobota (Dzień wolny)</option>
-                        <option value="0">Niedziela (Dzień wolny)</option>
+                        <!-- Generowane dynamicznie wg języka -->
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Godzina symulacji:</label>
+                    <label id="labelSimTime" class="block text-xs font-medium text-slate-300 mb-1">Godzina symulacji:</label>
                     <input type="time" id="simTimeInput" step="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button onclick="applySimulation()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition text-sm">
+                    <button onclick="applySimulation()" id="btnSimApply" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition text-sm">
                         Zastosuj czas
                     </button>
-                    <button onclick="resetSimulation()" class="px-4 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 rounded-xl transition text-sm">
+                    <button onclick="resetSimulation()" id="btnSimReset" class="px-4 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 rounded-xl transition text-sm">
                         Reset
                     </button>
                 </div>
@@ -232,84 +233,288 @@
 
     <script>
         // =========================================================================
-        // TUTAJ MOŻESZ BEZPOŚREDNIO EDYTOWAĆ PLAN DLA KAŻDEGO DNIA TYGODNIA:
-        // type: 'lesson' (Lekcja) lub 'break' (Przerwa)
+        // SŁOWNIK TŁUMACZEŃ (i18n)
+        // =========================================================================
+        const I18N = {
+            pl: {
+                headerSubtitle: 'Harmonogram & Status na żywo',
+                simBtnText: 'Symulator czasu',
+                simActiveText: 'Tryb symulacji czasu aktywny! Zegar:',
+                simResetBtn: 'Przywróć czas rzeczywisty',
+                labelCurrentTime: 'Aktualny czas',
+                labelCountdown: 'Pozostało do końca:',
+                sectionScheduleTitle: 'Plan Dzwonków Szkolnych',
+                sectionScheduleSub: 'Oficjalny harmonogram lekcji i przerw',
+                thBlock: 'Lp / Blok',
+                thTime: 'Czas trwania',
+                thDuration: 'Długość',
+                thStatus: 'Status',
+                modalSimTitle: 'Symulator Czasu',
+                modalSimDesc: 'Ustaw sztuczny czas i dzień tygodnia, aby przetestować działanie aplikacji.',
+                labelSimDay: 'Dzień tygodnia:',
+                labelSimTime: 'Godzina symulacji:',
+                btnSimApply: 'Zastosuj czas',
+                btnSimReset: 'Reset',
+                statusNow: 'TERAZ',
+                nextBell: 'Następny dzwonek:',
+                firstBell: 'Pierwszy dzwonek:',
+                noBellsToday: 'Brak dzwonków w weekend',
+                noBellsAfter: 'Brak zaplanowanych dzwonków dzisiaj',
+                
+                badgeLesson: 'TRWA LEKCJA',
+                badgeBreak: 'PRZERWA',
+                badgeBefore: 'OCZEKIWANIE',
+                badgeAfter: 'PO ZAJĘCIACH',
+                badgeWeekend: 'WEEKEND',
+                badgeEmpty: 'BRAK PLANU',
+
+                titleBefore: 'Przed Zajęciami',
+                titleAfter: 'Koniec Lekcji',
+                titleWeekend: 'Dzień Wolny',
+                titleEmpty: 'Brak zajęć',
+
+                subLesson: (end) => `Cisza w klasach. Zakończenie zajęć o ${end}.`,
+                subBreak: (end) => `Odpoczynek. Kolejna lekcja rozpocznie się o ${end}.`,
+                subBefore: (name, start) => `Pierwsza lekcja (${name}) rozpoczyna się o ${start}.`,
+                subAfter: 'Wszystkie zajęcia na dziś zostały zakończone.',
+                subWeekend: 'Dzisiaj nie ma zajęć lekcyjnych. Życzymy miłego wypoczynku!',
+                subEmpty: 'Brak zaplanowanych lekcji na ten dzień.',
+
+                noLessonsOnDay: 'Brak zaplanowanych lekcji na ten dzień.',
+                min: 'min',
+
+                days: {
+                    1: 'Poniedziałek',
+                    2: 'Wtorek',
+                    3: 'Środa',
+                    4: 'Czwartek',
+                    5: 'Piątek',
+                    6: 'Sobota',
+                    0: 'Niedziela'
+                },
+                daysShort: {
+                    1: 'Poniedziałek',
+                    2: 'Wtorek',
+                    3: 'Środa',
+                    4: 'Czwartek',
+                    5: 'Piątek'
+                },
+                months: ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia']
+            },
+
+            ja: {
+                headerSubtitle: 'チャイム運行スケジュール＆リアルタイム状況',
+                simBtnText: '時間シミュレーター',
+                simActiveText: '時間シミュレーションモード稼iod中！ 時計:',
+                simResetBtn: 'リアルタイムに戻す',
+                labelCurrentTime: '現在時刻',
+                labelCountdown: '終了まで残り時間:',
+                sectionScheduleTitle: '日日課・日課表',
+                sectionScheduleSub: '吹田南小学校 チャイム時刻表',
+                thBlock: '校時 / 区分',
+                thTime: '時間帯',
+                thDuration: '時間',
+                thStatus: '状態',
+                modalSimTitle: '時間シミュレーター',
+                modalSimDesc: '設定した曜日や時間での挙動をテストできます。',
+                labelSimDay: '曜日:',
+                labelSimTime: '設定時刻:',
+                btnSimApply: '適用',
+                btnSimReset: 'リセット',
+                statusNow: '現在',
+                nextBell: '次のチャイム:',
+                firstBell: '予鈴・始業チャイム:',
+                noBellsToday: '休日はチャイムはありません',
+                noBellsAfter: '本日の授業・チャイムはすべて終了しました',
+                
+                badgeLesson: '授業中',
+                badgeBreak: '休み時間',
+                badgeBefore: '始業前',
+                badgeAfter: '放課後',
+                badgeWeekend: '休日',
+                badgeEmpty: '予定なし',
+
+                titleBefore: '始業前',
+                titleAfter: '本日の授業終了',
+                titleWeekend: '休日（校休日）',
+                titleEmpty: '授業予定なし',
+
+                subLesson: (end) => `廊下は静かに移動しましょう。終了時刻: ${end}`,
+                subBreak: (end) => `次の時間の準備をしましょう。次時始業: ${end}`,
+                subBefore: (name, start) => `第1校時 (${name}) は ${start} に始まります。`,
+                subAfter: '本日の日課はすべて終了しました。気をつけて下校しましょう。',
+                subWeekend: '本日はお休みです。ゆっくり休んでください。',
+                subEmpty: '本日の授業予定はありません。',
+
+                noLessonsOnDay: 'この日の授業予定はありません。',
+                min: '分',
+
+                days: {
+                    1: '月曜日',
+                    2: '火曜日',
+                    3: '水曜日',
+                    4: '木曜日',
+                    5: '金曜日',
+                    6: '土曜日',
+                    0: '日曜日'
+                },
+                daysShort: {
+                    1: '月曜日',
+                    2: '火曜日',
+                    3: '水曜日',
+                    4: '木曜日',
+                    5: '金曜日'
+                },
+                months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+            },
+
+            en: {
+                headerSubtitle: 'Live Bell Schedule & Status',
+                simBtnText: 'Time Simulator',
+                simActiveText: 'Simulation mode active! Clock:',
+                simResetBtn: 'Restore Real Time',
+                labelCurrentTime: 'Current Time',
+                labelCountdown: 'Time Remaining:',
+                sectionScheduleTitle: 'School Bell Schedule',
+                sectionScheduleSub: 'Official timetable for classes and breaks',
+                thBlock: 'Period / Block',
+                thTime: 'Time Slot',
+                thDuration: 'Duration',
+                thStatus: 'Status',
+                modalSimTitle: 'Time Simulator',
+                modalSimDesc: 'Set custom time and day to test application status.',
+                labelSimDay: 'Day of week:',
+                labelSimTime: 'Simulation time:',
+                btnSimApply: 'Apply Time',
+                btnSimReset: 'Reset',
+                statusNow: 'NOW',
+                nextBell: 'Next Bell:',
+                firstBell: 'First Bell:',
+                noBellsToday: 'No bells scheduled on weekends',
+                noBellsAfter: 'No more bells scheduled today',
+                
+                badgeLesson: 'LESSON IN PROGRESS',
+                badgeBreak: 'BREAK',
+                badgeBefore: 'BEFORE SCHOOL',
+                badgeAfter: 'AFTER SCHOOL',
+                badgeWeekend: 'WEEKEND',
+                badgeEmpty: 'NO SCHEDULE',
+
+                titleBefore: 'Before School',
+                titleAfter: 'School Ended',
+                titleWeekend: 'Day Off',
+                titleEmpty: 'No Classes',
+
+                subLesson: (end) => `Quiet in hallways. Class finishes at ${end}.`,
+                subBreak: (end) => `Break time. Next period starts at ${end}.`,
+                subBefore: (name, start) => `First class (${name}) starts at ${start}.`,
+                subAfter: 'All classes for today have ended.',
+                subWeekend: 'No school today. Have a nice weekend!',
+                subEmpty: 'No scheduled classes for this day.',
+
+                noLessonsOnDay: 'No classes scheduled for this day.',
+                min: 'min',
+
+                days: {
+                    1: 'Monday',
+                    2: 'Tuesday',
+                    3: 'Wednesday',
+                    4: 'Thursday',
+                    5: 'Friday',
+                    6: 'Saturday',
+                    0: 'Sunday'
+                },
+                daysShort: {
+                    1: 'Monday',
+                    2: 'Tuesday',
+                    3: 'Wednesday',
+                    4: 'Thursday',
+                    5: 'Friday'
+                },
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            }
+        };
+
+        let currentLang = localStorage.getItem('app_lang') || 'pl';
+
+        // Helper dla wielojęzycznych nazw bloków
+        function getBlockName(item, lang) {
+            if (typeof item.name === 'object') {
+                return item.name[lang] || item.name['pl'] || '';
+            }
+            return item.name;
+        }
+
+        // =========================================================================
+        // HARMONOGRAMY LOKALIZOWANE (PL / JA / EN)
         // =========================================================================
 
-        // --- PONIEDZIAŁEK ---
         const BASE_SCHEDULE_MON = [
-            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
-            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
-            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
-            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
-            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
-            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
-            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
-            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
-            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:35' },
-            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:35', end: '15:20' }
+            { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: { pl: '2. Lekcja', ja: '第2時限', en: '2nd Period' }, start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: { pl: 'Przerwa', ja: '25分休み', en: 'Break (25 min)' }, start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: { pl: '3. Lekcja', ja: '第3時限', en: '3rd Period' }, start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: { pl: 'Przerwa Obiad / Długa', ja: '給食・昼休み', en: 'Lunch & Long Break' }, start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: { pl: '5. Lekcja', ja: '第5時限', en: '5th Period' }, start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: { pl: 'Przerwa', ja: '清掃・掃除', en: 'Cleaning Time' }, start: '14:25', end: '14:35' },
+            { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:35', end: '15:20' }
         ];
 
-        // --- WTOREK ---
         const BASE_SCHEDULE_TUE = [
-            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
-            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
-            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
-            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
-            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
-            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
-            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
-            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
-            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
-            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+            { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: { pl: '2. Lekcja', ja: '第2時限', en: '2nd Period' }, start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: { pl: 'Przerwa', ja: '25分休み', en: 'Break (25 min)' }, start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: { pl: '3. Lekcja', ja: '第3時限', en: '3rd Period' }, start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: { pl: 'Przerwa Obiad / Długa', ja: '給食・昼休み', en: 'Lunch & Long Break' }, start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: { pl: '5. Lekcja', ja: '第5時限', en: '5th Period' }, start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
-        // --- ŚRODA ---
         const BASE_SCHEDULE_WED = [
-            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
-            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
-            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
-            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
-            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
-            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
-            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            //{ id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:05' },
-            //{ id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' }
+            { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: { pl: '2. Lekcja', ja: '第2時限', en: '2nd Period' }, start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: { pl: 'Przerwa', ja: '25分休み', en: 'Break (25 min)' }, start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: { pl: '3. Lekcja', ja: '第3時限', en: '3rd Period' }, start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' }
         ];
 
-        // --- CZWARTEK ---
         const BASE_SCHEDULE_THU = [
-            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
-            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
-            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
-            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
-            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
-            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
-            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
-            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
-            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
-            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+            { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: { pl: '2. Lekcja', ja: '第2時限', en: '2nd Period' }, start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: { pl: 'Przerwa', ja: '25分休み', en: 'Break (25 min)' }, start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: { pl: '3. Lekcja', ja: '第3時限', en: '3rd Period' }, start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: { pl: 'Przerwa Obiad / Długa', ja: '給食・昼休み', en: 'Lunch & Long Break' }, start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: { pl: '5. Lekcja', ja: '第5時限', en: '5th Period' }, start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
-        // --- PIĄTEK ---
         const BASE_SCHEDULE_FRI = [
-            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
-            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
-            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
-            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
-            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
-            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
-            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
-            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
-            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
-            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+            { id: 1, type: 'lesson', name: { pl: '1. Lekcja', ja: '第1時限', en: '1st Period' }, start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: { pl: '2. Lekcja', ja: '第2時限', en: '2nd Period' }, start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: { pl: 'Przerwa', ja: '25分休み', en: 'Break (25 min)' }, start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: { pl: '3. Lekcja', ja: '第3時限', en: '3rd Period' }, start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: { pl: '4. Lekcja', ja: '第4時限', en: '4th Period' }, start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: { pl: 'Przerwa Obiad / Długa', ja: '給食・昼休み', en: 'Lunch & Long Break' }, start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: { pl: '5. Lekcja', ja: '第5時限', en: '5th Period' }, start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: { pl: 'Przerwa', ja: '休み時間', en: 'Break' }, start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: { pl: '6. Lekcja', ja: '第6時限', en: '6th Period' }, start: '14:30', end: '15:15' }
         ];
 
-        // MAPOWANIE DNI TYGODNIA (1 = Pon, 2 = Wt, ..., 5 = Pt)
         const WEEKLY_SCHEDULE = {
             1: BASE_SCHEDULE_MON,
             2: BASE_SCHEDULE_TUE,
@@ -325,14 +530,12 @@
         let previousStatusId = null; 
         let selectedDayView = null;  
 
-        // Aux: Konwersja czasu "HH:MM" na minuty od początku dnia
         function timeToMinutes(timeStr) {
             if (!timeStr) return 0;
             const [h, m] = timeStr.split(':').map(Number);
             return h * 60 + m;
         }
 
-        // Pobierz aktualny czas aplikacji
         function getAppDate() {
             if (isSimulating) {
                 return new Date(Date.now() + simulatedTimeOffset);
@@ -340,7 +543,6 @@
             return new Date();
         }
 
-        // Pobierz aktualny dzień tygodnia
         function getAppDayOfWeek() {
             if (isSimulating && simulatedDay !== null) {
                 return simulatedDay;
@@ -348,7 +550,6 @@
             return new Date().getDay();
         }
 
-        // Formatowanie sekund na MM:SS
         function formatCountdown(totalSeconds) {
             if (totalSeconds < 0) totalSeconds = 0;
             const m = Math.floor(totalSeconds / 60);
@@ -356,15 +557,74 @@
             return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
 
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('app_lang', lang);
+            updateLanguageUI();
+            updateApp();
+        }
+
+        function updateLanguageUI() {
+            const txt = I18N[currentLang];
+
+            // Przycisk aktywny w selectorze
+            ['pl', 'ja', 'en'].forEach(l => {
+                const btn = document.getElementById(`langBtn-${l}`);
+                if (l === currentLang) {
+                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow';
+                } else {
+                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg transition text-slate-400 hover:text-white';
+                }
+            });
+
+            // Teksty statyczne w UI
+            document.getElementById('headerSubtitle').textContent = txt.headerSubtitle;
+            document.getElementById('simBtnText').textContent = txt.simBtnText;
+            document.getElementById('simActiveText').textContent = txt.simActiveText;
+            document.getElementById('simResetBtn').textContent = txt.simResetBtn;
+            document.getElementById('labelCurrentTime').textContent = txt.labelCurrentTime;
+            document.getElementById('labelCountdown').textContent = txt.labelCountdown;
+            document.getElementById('sectionScheduleTitle').innerHTML = `<i class="fa-solid fa-calendar-days text-blue-400"></i> ${txt.sectionScheduleTitle}`;
+            document.getElementById('sectionScheduleSub').textContent = txt.sectionScheduleSub;
+            document.getElementById('thBlock').textContent = txt.thBlock;
+            document.getElementById('thTime').textContent = txt.thTime;
+            document.getElementById('thDuration').textContent = txt.thDuration;
+            document.getElementById('thStatus').textContent = txt.thStatus;
+
+            document.getElementById('modalSimTitle').innerHTML = `<i class="fa-solid fa-flask text-indigo-400"></i> ${txt.modalSimTitle}`;
+            document.getElementById('modalSimDesc').textContent = txt.modalSimDesc;
+            document.getElementById('labelSimDay').textContent = txt.labelSimDay;
+            document.getElementById('labelSimTime').textContent = txt.labelSimTime;
+            document.getElementById('btnSimApply').textContent = txt.btnSimApply;
+            document.getElementById('btnSimReset').textContent = txt.btnSimReset;
+
+            // Opcje dni tygodnia w symulatorze
+            const simSelect = document.getElementById('simDayInput');
+            const currentVal = simSelect.value || '1';
+            simSelect.innerHTML = `
+                <option value="1">${txt.days[1]}</option>
+                <option value="2">${txt.days[2]}</option>
+                <option value="3">${txt.days[3]}</option>
+                <option value="4">${txt.days[4]}</option>
+                <option value="5">${txt.days[5]}</option>
+                <option value="6">${txt.days[6]}</option>
+                <option value="0">${txt.days[0]}</option>
+            `;
+            simSelect.value = currentVal;
+        }
+
         function renderScheduleTable(currentBlockId, currentDay) {
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
+            const txt = I18N[currentLang];
 
             const viewDay = selectedDayView || (currentDay >= 1 && currentDay <= 5 ? currentDay : 1);
 
+            // Aktualizacja zakładek dni
             for (let day = 1; day <= 5; day++) {
                 const tabBtn = document.getElementById(`tab-day-${day}`);
                 if (tabBtn) {
+                    tabBtn.textContent = txt.daysShort[day];
                     if (day === viewDay) {
                         tabBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-500/20';
                     } else {
@@ -376,7 +636,7 @@
             const daySchedule = WEEKLY_SCHEDULE[viewDay] || [];
 
             if (daySchedule.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-500 text-xs">Brak zaplanowanych lekcji na ten dzień.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-500 text-xs">${txt.noLessonsOnDay}</td></tr>`;
                 return;
             }
 
@@ -392,21 +652,22 @@
                 }`;
 
                 const duration = timeToMinutes(item.end) - timeToMinutes(item.start);
+                const nameText = getBlockName(item, currentLang);
 
                 tr.innerHTML = `
                     <td class="py-3 px-4 flex items-center gap-2">
                         <i class="fa-solid ${isLesson ? 'fa-book-open text-blue-400' : 'fa-mug-hot text-amber-400'} text-xs"></i>
-                        <span>${item.name}</span>
+                        <span>${nameText}</span>
                     </td>
                     <td class="py-3 px-4 font-mono text-xs sm:text-sm">
                         ${item.start} - ${item.end}
                     </td>
                     <td class="py-3 px-4 text-xs text-slate-400">
-                        ${duration} min
+                        ${duration} ${txt.min}
                     </td>
                     <td class="py-3 px-4 text-right">
                         ${isCurrent 
-                            ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30"><span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span> TERAZ</span>' 
+                            ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30"><span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span> ${txt.statusNow}</span>` 
                             : '<span class="text-xs text-slate-500">--</span>'
                         }
                     </td>
@@ -423,6 +684,7 @@
         function updateApp() {
             const now = getAppDate();
             const currentDayOfWeek = getAppDayOfWeek();
+            const txt = I18N[currentLang];
             
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -433,9 +695,14 @@
                 document.getElementById('simTimeDisplay').textContent = `${hours}:${minutes}:${seconds}`;
             }
 
-            const dayNames = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
-            const monthNames = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
-            document.getElementById('dateDisplay').textContent = `${dayNames[currentDayOfWeek]}, ${now.getDate()} ${monthNames[now.getMonth()]}`;
+            // Data wg języka
+            if (currentLang === 'ja') {
+                document.getElementById('dateDisplay').textContent = `${now.getFullYear()}年${txt.months[now.getMonth()]}${now.getDate()}日 (${txt.days[currentDayOfWeek]})`;
+            } else if (currentLang === 'en') {
+                document.getElementById('dateDisplay').textContent = `${txt.days[currentDayOfWeek]}, ${txt.months[now.getMonth()]} ${now.getDate()}`;
+            } else {
+                document.getElementById('dateDisplay').textContent = `${txt.days[currentDayOfWeek]}, ${now.getDate()} ${txt.months[now.getMonth()]}`;
+            }
 
             const schedule = WEEKLY_SCHEDULE[currentDayOfWeek] || [];
             const isWeekend = (currentDayOfWeek === 0 || currentDayOfWeek === 6);
@@ -455,12 +722,12 @@
 
             if (isWeekend) {
                 currentStatusId = 'WEEKEND';
-                statusTitle.textContent = 'Dzień Wolny';
-                statusBadge.textContent = 'WEEKEND';
+                statusTitle.textContent = txt.titleWeekend;
+                statusBadge.textContent = txt.badgeWeekend;
                 statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-                statusSubtitle.textContent = 'Dzisiaj nie ma zajęć lekcyjnych. Życzymy miłego wypoczynku!';
+                statusSubtitle.textContent = txt.subWeekend;
                 countdownDisplay.textContent = '--:--';
-                nextBellTime.textContent = 'Brak dzwonków w weekend';
+                nextBellTime.textContent = txt.noBellsToday;
                 progressBar.style.width = '0%';
                 progressBar.className = 'bg-emerald-500 h-full rounded-full';
             } else if (schedule.length > 0) {
@@ -475,7 +742,6 @@
                 }
 
                 const firstBlock = schedule[0];
-                const lastBlock = schedule[schedule.length - 1];
 
                 if (activeBlock) {
                     currentStatusId = activeBlock.id;
@@ -485,20 +751,20 @@
                     const totalSec = endSec - startSec;
                     const progressPercent = Math.min(100, Math.max(0, ((currentSeconds - startSec) / totalSec) * 100));
 
-                    statusTitle.textContent = activeBlock.name;
+                    statusTitle.textContent = getBlockName(activeBlock, currentLang);
                     countdownDisplay.textContent = formatCountdown(remainingSec);
                     progressBar.style.width = `${progressPercent}%`;
-                    nextBellTime.textContent = `Następny dzwonek: ${activeBlock.end}`;
+                    nextBellTime.textContent = `${txt.nextBell} ${activeBlock.end}`;
 
                     if (activeBlock.type === 'lesson') {
-                        statusBadge.textContent = 'TRWA LEKCJA';
+                        statusBadge.textContent = txt.badgeLesson;
                         statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-500/20 text-blue-400 border border-blue-500/30';
-                        statusSubtitle.textContent = `Cisza w klasach. Zakończenie zajęć o ${activeBlock.end}.`;
+                        statusSubtitle.textContent = txt.subLesson(activeBlock.end);
                         progressBar.className = 'bg-blue-500 h-full rounded-full transition-all duration-1000';
                     } else {
-                        statusBadge.textContent = 'PRZERWA';
+                        statusBadge.textContent = txt.badgeBreak;
                         statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30';
-                        statusSubtitle.textContent = `Odpoczynek. Kolejna lekcja rozpocznie się o ${activeBlock.end}.`;
+                        statusSubtitle.textContent = txt.subBreak(activeBlock.end);
                         progressBar.className = 'bg-amber-500 h-full rounded-full transition-all duration-1000';
                     }
 
@@ -507,32 +773,32 @@
                     const startSec = timeToMinutes(firstBlock.start) * 60;
                     const remainingSec = startSec - currentSeconds;
 
-                    statusTitle.textContent = 'Przed Zajęciami';
-                    statusBadge.textContent = 'OCZEKIWANIE';
+                    statusTitle.textContent = txt.titleBefore;
+                    statusBadge.textContent = txt.badgeBefore;
                     statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-                    statusSubtitle.textContent = `Pierwsza lekcja (${firstBlock.name}) rozpoczyna się o ${firstBlock.start}.`;
+                    statusSubtitle.textContent = txt.subBefore(getBlockName(firstBlock, currentLang), firstBlock.start);
                     countdownDisplay.textContent = formatCountdown(remainingSec);
-                    nextBellTime.textContent = `Pierwszy dzwonek: ${firstBlock.start}`;
+                    nextBellTime.textContent = `${txt.firstBell} ${firstBlock.start}`;
                     progressBar.style.width = '0%';
                     progressBar.className = 'bg-emerald-500 h-full rounded-full';
 
                 } else {
                     currentStatusId = 'AFTER_SCHOOL';
-                    statusTitle.textContent = 'Koniec Lekcji';
-                    statusBadge.textContent = 'PO ZAJĘCIACH';
+                    statusTitle.textContent = txt.titleAfter;
+                    statusBadge.textContent = txt.badgeAfter;
                     statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-purple-500/20 text-purple-400 border border-purple-500/30';
-                    statusSubtitle.textContent = 'Wszystkie zajęcia na dziś zostały zakończone.';
+                    statusSubtitle.textContent = txt.subAfter;
                     countdownDisplay.textContent = '00:00';
-                    nextBellTime.textContent = 'Brak zaplanowanych dzwonków dzisiaj';
+                    nextBellTime.textContent = txt.noBellsAfter;
                     progressBar.style.width = '100%';
                     progressBar.className = 'bg-purple-500 h-full rounded-full';
                 }
             } else {
                 currentStatusId = 'EMPTY_SCHEDULE';
-                statusTitle.textContent = 'Brak zajęć';
-                statusBadge.textContent = 'BRAK PLANU';
+                statusTitle.textContent = txt.titleEmpty;
+                statusBadge.textContent = txt.badgeEmpty;
                 statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-slate-500/20 text-slate-400 border border-slate-500/30';
-                statusSubtitle.textContent = 'Brak zaplanowanych lekcji na ten dzień.';
+                statusSubtitle.textContent = txt.subEmpty;
                 countdownDisplay.textContent = '00:00';
                 nextBellTime.textContent = '--:--';
                 progressBar.style.width = '0%';
@@ -618,6 +884,7 @@
 
         // Start pętli zegara
         window.onload = function() {
+            updateLanguageUI();
             updateApp();
             setInterval(updateApp, 1000);
         };
