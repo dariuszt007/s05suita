@@ -87,7 +87,7 @@
             </button>
         </div>
 
-        <!-- SEKACJA 1: STAN OBECNY (PROMINENTNY WYŚWIETLACZ NA SAMEJ GÓRZE) -->
+        <!-- SEKCJA 1: STAN OBECNY (PROMINENTNY WYŚWIETLACZ NA SAMEJ GÓRZE) -->
         <section id="statusCard" class="relative overflow-hidden rounded-3xl bg-slate-800/90 border-2 border-slate-700 p-6 sm:p-8 shadow-2xl transition-all duration-300">
             <!-- Tło ozdobne z gradientem -->
             <div id="statusGlow" class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -153,6 +153,15 @@
                 </div>
             </div>
 
+            <!-- Zakładki Dni Tygodnia (Pon - Pt) -->
+            <div class="flex flex-wrap gap-2 mb-4 border-b border-slate-700/60 pb-3" id="dayTabsContainer">
+                <button onclick="selectDayView(1)" id="tab-day-1" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Poniedziałek</button>
+                <button onclick="selectDayView(2)" id="tab-day-2" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Wtorek</button>
+                <button onclick="selectDayView(3)" id="tab-day-3" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Środa</button>
+                <button onclick="selectDayView(4)" id="tab-day-4" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Czwartek</button>
+                <button onclick="selectDayView(5)" id="tab-day-5" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Piątek</button>
+            </div>
+
             <!-- Tabela lekcji -->
             <div class="overflow-x-auto rounded-xl border border-slate-700/80">
                 <table class="w-full text-left border-collapse">
@@ -173,7 +182,7 @@
 
     </main>
 
-    <!-- MODAL 1: Symulator Czasu -->
+    <!-- MODAL: Symulator Czasu -->
     <div id="simModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -185,11 +194,23 @@
                 </button>
             </div>
             <p class="text-xs text-slate-300 mb-4">
-                Ustaw sztuczny czas, aby skontrolować działanie licznika, zmianę lekcji oraz wizualny efekt migania.
+                Ustaw sztuczny czas i dzień tygodnia, aby przetestować działanie aplikacji.
             </p>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Wybierz godzinę symulacji:</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Dzień tygodnia:</label>
+                    <select id="simDayInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="1">Poniedziałek</option>
+                        <option value="2">Wtorek</option>
+                        <option value="3">Środa</option>
+                        <option value="4">Czwartek</option>
+                        <option value="5">Piątek</option>
+                        <option value="6">Sobota (Dzień wolny)</option>
+                        <option value="0">Niedziela (Dzień wolny)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Godzina symulacji:</label>
                     <input type="time" id="simTimeInput" step="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div class="flex gap-2 pt-2">
@@ -204,34 +225,19 @@
         </div>
     </div>
 
-    <!-- MODAL 2: Edycja Planu -->
-    <div id="editModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] flex flex-col">
-
-            
-            <div class="overflow-y-auto flex-1 pr-2 space-y-3" id="editListContainer">
-                <!-- Generowane przez JS -->
-            </div>
-
-            <div class="pt-4 mt-4 border-t border-slate-700 flex justify-end gap-3">
-                <button onclick="toggleEditModal()" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-semibold transition">
-                    Anuluj
-                </button>
-                <button onclick="saveScheduleChanges()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition shadow-md">
-                    Zapisz Zmiany
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         System Sygnalizacji i Harmonogramu Dzwonków Szkolnych &copy; 2026
     </footer>
 
     <script>
-        // DOMYŚLNY HARMONOGRAM DZWONKÓW (zgodny z życzeniem)
-        const DEFAULT_SCHEDULE = [
+        // =========================================================================
+        // TUTAJ MOŻESZ BEZPOŚREDNIO EDYTOWAĆ PLAN DLA KAŻDEGO DNIA TYGODNIA:
+        // type: 'lesson' (Lekcja) lub 'break' (Przerwa)
+        // =========================================================================
+
+        // --- PONIEDZIAŁEK ---
+        const BASE_SCHEDULE_MON = [
             { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
             { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
             { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
@@ -239,30 +245,107 @@
             { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
             { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
             { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
-            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:05' },
+            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
             { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
             { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:35' },
             { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:35', end: '15:20' }
         ];
 
+        // --- WTOREK ---
+        const BASE_SCHEDULE_TUE = [
+            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+        ];
+
+        // --- ŚRODA ---
+        const BASE_SCHEDULE_WED = [
+            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
+            //{ id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:05' },
+            //{ id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' }
+        ];
+
+        // --- CZWARTEK ---
+        const BASE_SCHEDULE_THU = [
+            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+        ];
+
+        // --- PIĄTEK ---
+        const BASE_SCHEDULE_FRI = [
+            { id: 1, type: 'lesson', name: '1. Lekcja', start: '08:50', end: '09:35' },
+            { id: 2, type: 'break',  name: 'Przerwa', start: '09:35', end: '09:40' },
+            { id: 3, type: 'lesson', name: '2. Lekcja', start: '09:40', end: '10:25' },
+            { id: 4, type: 'break',  name: 'Przerwa', start: '10:25', end: '10:45' },
+            { id: 5, type: 'lesson', name: '3. Lekcja', start: '10:45', end: '11:30' },
+            { id: 6, type: 'break',  name: 'Przerwa', start: '11:30', end: '11:35' },
+            { id: 7, type: 'lesson', name: '4. Lekcja', start: '11:35', end: '12:20' },
+            { id: 8, type: 'break',  name: 'Przerwa Obiad / Długa', start: '12:20', end: '13:40' },
+            { id: 9, type: 'lesson', name: '5. Lekcja', start: '13:40', end: '14:25' },
+            { id: 10, type: 'break', name: 'Przerwa', start: '14:25', end: '14:30' },
+            { id: 11, type: 'lesson', name: '6. Lekcja', start: '14:30', end: '15:15' }
+        ];
+
+        // MAPOWANIE DNI TYGODNIA (1 = Pon, 2 = Wt, ..., 5 = Pt)
+        const WEEKLY_SCHEDULE = {
+            1: BASE_SCHEDULE_MON,
+            2: BASE_SCHEDULE_TUE,
+            3: BASE_SCHEDULE_WED,
+            4: BASE_SCHEDULE_THU,
+            5: BASE_SCHEDULE_FRI
+        };
+
         // Stan aplikacji
-        let schedule = JSON.parse(localStorage.getItem('bell_schedule')) || DEFAULT_SCHEDULE;
         let isSimulating = false;
-        let simulatedTimeOffset = 0; // ms różnicy
-        let previousStatusId = null; // Do wykrywania zmiany stanu i wyzwalania błysku
+        let simulatedTimeOffset = 0; 
+        let simulatedDay = null;     
+        let previousStatusId = null; 
+        let selectedDayView = null;  
 
         // Aux: Konwersja czasu "HH:MM" na minuty od początku dnia
         function timeToMinutes(timeStr) {
+            if (!timeStr) return 0;
             const [h, m] = timeStr.split(':').map(Number);
             return h * 60 + m;
         }
 
-        // Pobierz aktualny czas aplikacji (rzeczywisty lub symulowany)
+        // Pobierz aktualny czas aplikacji
         function getAppDate() {
             if (isSimulating) {
                 return new Date(Date.now() + simulatedTimeOffset);
             }
             return new Date();
+        }
+
+        // Pobierz aktualny dzień tygodnia
+        function getAppDayOfWeek() {
+            if (isSimulating && simulatedDay !== null) {
+                return simulatedDay;
+            }
+            return new Date().getDay();
         }
 
         // Formatowanie sekund na MM:SS
@@ -273,12 +356,32 @@
             return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
 
-        function renderScheduleTable(currentBlockId) {
+        function renderScheduleTable(currentBlockId, currentDay) {
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            schedule.forEach(item => {
-                const isCurrent = item.id === currentBlockId;
+            const viewDay = selectedDayView || (currentDay >= 1 && currentDay <= 5 ? currentDay : 1);
+
+            for (let day = 1; day <= 5; day++) {
+                const tabBtn = document.getElementById(`tab-day-${day}`);
+                if (tabBtn) {
+                    if (day === viewDay) {
+                        tabBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-500/20';
+                    } else {
+                        tabBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700';
+                    }
+                }
+            }
+
+            const daySchedule = WEEKLY_SCHEDULE[viewDay] || [];
+
+            if (daySchedule.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-500 text-xs">Brak zaplanowanych lekcji na ten dzień.</td></tr>`;
+                return;
+            }
+
+            daySchedule.forEach(item => {
+                const isCurrent = (viewDay === currentDay) && (item.id === currentBlockId);
                 const isLesson = item.type === 'lesson';
 
                 const tr = document.createElement('tr');
@@ -288,7 +391,6 @@
                         : 'hover:bg-slate-800/40 text-slate-300'
                 }`;
 
-                // Calculate duration in min
                 const duration = timeToMinutes(item.end) - timeToMinutes(item.start);
 
                 tr.innerHTML = `
@@ -313,10 +415,15 @@
             });
         }
 
+        function selectDayView(dayNum) {
+            selectedDayView = dayNum;
+            updateApp();
+        }
+
         function updateApp() {
             const now = getAppDate();
+            const currentDayOfWeek = getAppDayOfWeek();
             
-            // Formatuj zegar główny
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
@@ -326,34 +433,16 @@
                 document.getElementById('simTimeDisplay').textContent = `${hours}:${minutes}:${seconds}`;
             }
 
-            // Data
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('pl-PL', options);
+            const dayNames = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+            const monthNames = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+            document.getElementById('dateDisplay').textContent = `${dayNames[currentDayOfWeek]}, ${now.getDate()} ${monthNames[now.getMonth()]}`;
 
-            // Obecny czas w sekundach od początku dnia
+            const schedule = WEEKLY_SCHEDULE[currentDayOfWeek] || [];
+            const isWeekend = (currentDayOfWeek === 0 || currentDayOfWeek === 6);
+
             const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
             const currentMin = currentSeconds / 60;
 
-            // Znajdź obecny blok
-            let activeBlock = null;
-            let nextBlock = null;
-
-            for (let i = 0; i < schedule.length; i++) {
-                const startMin = timeToMinutes(schedule[i].start);
-                const endMin = timeToMinutes(schedule[i].end);
-
-                if (currentMin >= startMin && currentMin < endMin) {
-                    activeBlock = schedule[i];
-                    nextBlock = schedule[i + 1] || null;
-                    break;
-                }
-            }
-
-            // Wyznaczanie stanu gdy nie trwa żaden blok
-            const firstBlock = schedule[0];
-            const lastBlock = schedule[schedule.length - 1];
-
-            const statusCard = document.getElementById('statusCard');
             const statusBadge = document.getElementById('statusBadge');
             const statusTitle = document.getElementById('statusTitle');
             const statusSubtitle = document.getElementById('statusSubtitle');
@@ -362,80 +451,111 @@
             const nextBellTime = document.getElementById('nextBellTime');
 
             let currentStatusId = null;
+            let activeBlock = null;
 
-            if (activeBlock) {
-                currentStatusId = activeBlock.id;
-                const endSec = timeToMinutes(activeBlock.end) * 60;
-                const startSec = timeToMinutes(activeBlock.start) * 60;
-                const remainingSec = endSec - currentSeconds;
-                const totalSec = endSec - startSec;
-                const progressPercent = Math.min(100, Math.max(0, ((currentSeconds - startSec) / totalSec) * 100));
-
-                statusTitle.textContent = activeBlock.name;
-                countdownDisplay.textContent = formatCountdown(remainingSec);
-                progressBar.style.width = `${progressPercent}%`;
-                nextBellTime.textContent = `Następny dzwonek: ${activeBlock.end}`;
-
-                if (activeBlock.type === 'lesson') {
-                    statusBadge.textContent = 'TRWA LEKCJA';
-                    statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-500/20 text-blue-400 border border-blue-500/30';
-                    statusSubtitle.textContent = `Cisza w klasach. Zakończenie zajęć o ${activeBlock.end}.`;
-                    progressBar.className = 'bg-blue-500 h-full rounded-full transition-all duration-1000';
-                } else {
-                    statusBadge.textContent = 'PRZERWA';
-                    statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30';
-                    statusSubtitle.textContent = `Odpoczynek. Kolejna lekcja rozpocznie się o ${activeBlock.end}.`;
-                    progressBar.className = 'bg-amber-500 h-full rounded-full transition-all duration-1000';
-                }
-
-            } else if (currentMin < timeToMinutes(firstBlock.start)) {
-                // Przed zajęciami
-                currentStatusId = 'BEFORE_SCHOOL';
-                const startSec = timeToMinutes(firstBlock.start) * 60;
-                const remainingSec = startSec - currentSeconds;
-
-                statusTitle.textContent = 'Przed Zajęciami';
-                statusBadge.textContent = 'OCZEKIWANIE';
+            if (isWeekend) {
+                currentStatusId = 'WEEKEND';
+                statusTitle.textContent = 'Dzień Wolny';
+                statusBadge.textContent = 'WEEKEND';
                 statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-                statusSubtitle.textContent = `Pierwsza lekcja (${firstBlock.name}) rozpoczyna się o ${firstBlock.start}.`;
-                countdownDisplay.textContent = formatCountdown(remainingSec);
-                nextBellTime.textContent = `Pierwszy dzwonek: ${firstBlock.start}`;
+                statusSubtitle.textContent = 'Dzisiaj nie ma zajęć lekcyjnych. Życzymy miłego wypoczynku!';
+                countdownDisplay.textContent = '--:--';
+                nextBellTime.textContent = 'Brak dzwonków w weekend';
                 progressBar.style.width = '0%';
                 progressBar.className = 'bg-emerald-500 h-full rounded-full';
+            } else if (schedule.length > 0) {
+                for (let i = 0; i < schedule.length; i++) {
+                    const startMin = timeToMinutes(schedule[i].start);
+                    const endMin = timeToMinutes(schedule[i].end);
 
+                    if (currentMin >= startMin && currentMin < endMin) {
+                        activeBlock = schedule[i];
+                        break;
+                    }
+                }
+
+                const firstBlock = schedule[0];
+                const lastBlock = schedule[schedule.length - 1];
+
+                if (activeBlock) {
+                    currentStatusId = activeBlock.id;
+                    const endSec = timeToMinutes(activeBlock.end) * 60;
+                    const startSec = timeToMinutes(activeBlock.start) * 60;
+                    const remainingSec = endSec - currentSeconds;
+                    const totalSec = endSec - startSec;
+                    const progressPercent = Math.min(100, Math.max(0, ((currentSeconds - startSec) / totalSec) * 100));
+
+                    statusTitle.textContent = activeBlock.name;
+                    countdownDisplay.textContent = formatCountdown(remainingSec);
+                    progressBar.style.width = `${progressPercent}%`;
+                    nextBellTime.textContent = `Następny dzwonek: ${activeBlock.end}`;
+
+                    if (activeBlock.type === 'lesson') {
+                        statusBadge.textContent = 'TRWA LEKCJA';
+                        statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-500/20 text-blue-400 border border-blue-500/30';
+                        statusSubtitle.textContent = `Cisza w klasach. Zakończenie zajęć o ${activeBlock.end}.`;
+                        progressBar.className = 'bg-blue-500 h-full rounded-full transition-all duration-1000';
+                    } else {
+                        statusBadge.textContent = 'PRZERWA';
+                        statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                        statusSubtitle.textContent = `Odpoczynek. Kolejna lekcja rozpocznie się o ${activeBlock.end}.`;
+                        progressBar.className = 'bg-amber-500 h-full rounded-full transition-all duration-1000';
+                    }
+
+                } else if (currentMin < timeToMinutes(firstBlock.start)) {
+                    currentStatusId = 'BEFORE_SCHOOL';
+                    const startSec = timeToMinutes(firstBlock.start) * 60;
+                    const remainingSec = startSec - currentSeconds;
+
+                    statusTitle.textContent = 'Przed Zajęciami';
+                    statusBadge.textContent = 'OCZEKIWANIE';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                    statusSubtitle.textContent = `Pierwsza lekcja (${firstBlock.name}) rozpoczyna się o ${firstBlock.start}.`;
+                    countdownDisplay.textContent = formatCountdown(remainingSec);
+                    nextBellTime.textContent = `Pierwszy dzwonek: ${firstBlock.start}`;
+                    progressBar.style.width = '0%';
+                    progressBar.className = 'bg-emerald-500 h-full rounded-full';
+
+                } else {
+                    currentStatusId = 'AFTER_SCHOOL';
+                    statusTitle.textContent = 'Koniec Lekcji';
+                    statusBadge.textContent = 'PO ZAJĘCIACH';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-purple-500/20 text-purple-400 border border-purple-500/30';
+                    statusSubtitle.textContent = 'Wszystkie zajęcia na dziś zostały zakończone.';
+                    countdownDisplay.textContent = '00:00';
+                    nextBellTime.textContent = 'Brak zaplanowanych dzwonków dzisiaj';
+                    progressBar.style.width = '100%';
+                    progressBar.className = 'bg-purple-500 h-full rounded-full';
+                }
             } else {
-                // Po zajęciach
-                currentStatusId = 'AFTER_SCHOOL';
-                statusTitle.textContent = 'Koniec Lekcji';
-                statusBadge.textContent = 'PO ZAJĘCIACH';
-                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-purple-500/20 text-purple-400 border border-purple-500/30';
-                statusSubtitle.textContent = 'Wszystkie zajęcia na dziś zostały zakończone.';
+                currentStatusId = 'EMPTY_SCHEDULE';
+                statusTitle.textContent = 'Brak zajęć';
+                statusBadge.textContent = 'BRAK PLANU';
+                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-slate-500/20 text-slate-400 border border-slate-500/30';
+                statusSubtitle.textContent = 'Brak zaplanowanych lekcji na ten dzień.';
                 countdownDisplay.textContent = '00:00';
-                nextBellTime.textContent = 'Brak zaplanowanych dzwonków dzisiaj';
-                progressBar.style.width = '100%';
-                progressBar.className = 'bg-purple-500 h-full rounded-full';
+                nextBellTime.textContent = '--:--';
+                progressBar.style.width = '0%';
             }
 
-            // --- WIZUALNE SYGNAŁY PRZEJŚCIA / DZWONKA ---
-            if (previousStatusId !== null && previousStatusId !== currentStatusId) {
+            if (previousStatusId !== null && previousStatusId !== currentStatusId && !isWeekend) {
                 triggerVisualBell();
             }
             previousStatusId = currentStatusId;
 
-            // Odśwież tabelę
-            renderScheduleTable(activeBlock ? activeBlock.id : null);
+            renderScheduleTable(activeBlock ? activeBlock.id : null, currentDayOfWeek);
         }
 
-        // Funkcja wyzwalająca impuls/miganie bez dźwięku
         function triggerVisualBell() {
             const card = document.getElementById('statusCard');
             card.classList.add('status-alert');
             
-            // Usunięcie klasy migania po 4 sekundach
             setTimeout(() => {
                 card.classList.remove('status-alert');
             }, 4000);
         }
+
+        // --- FUNKCJE SYMULATORA CZASU ---
 
         function toggleSimModal() {
             const modal = document.getElementById('simModal');
@@ -446,11 +566,14 @@
                 const m = now.getMinutes().toString().padStart(2, '0');
                 const s = now.getSeconds().toString().padStart(2, '0');
                 document.getElementById('simTimeInput').value = `${h}:${m}:${s}`;
+                document.getElementById('simDayInput').value = getAppDayOfWeek().toString();
             }
         }
 
         function applySimulation() {
             const timeVal = document.getElementById('simTimeInput').value;
+            const dayVal = parseInt(document.getElementById('simDayInput').value, 10);
+
             if (!timeVal) return;
 
             const [h, m, s] = timeVal.split(':').map(Number);
@@ -458,7 +581,12 @@
             targetDate.setHours(h, m, s || 0, 0);
 
             simulatedTimeOffset = targetDate.getTime() - Date.now();
+            simulatedDay = dayVal;
             isSimulating = true;
+
+            if (dayVal >= 1 && dayVal <= 5) {
+                selectedDayView = dayVal;
+            }
 
             document.getElementById('simBanner').classList.remove('hidden');
             toggleSimModal();
@@ -468,68 +596,9 @@
         function resetSimulation() {
             isSimulating = false;
             simulatedTimeOffset = 0;
+            simulatedDay = null;
+            selectedDayView = null;
             document.getElementById('simBanner').classList.add('hidden');
-            updateApp();
-        }
-
-        function toggleEditModal() {
-            const modal = document.getElementById('editModal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                renderEditForm();
-            }
-        }
-
-        function renderEditForm() {
-            const container = document.getElementById('editListContainer');
-            container.innerHTML = '';
-
-            schedule.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'flex flex-col sm:flex-row items-center gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60';
-                div.innerHTML = `
-                    <div class="flex-1 w-full sm:w-auto">
-                        <input type="text" id="edit-name-${index}" value="${item.name}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
-                    </div>
-                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between">
-                        <input type="time" id="edit-start-${index}" value="${item.start}" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-mono">
-                        <span class="text-xs text-slate-500">-</span>
-                        <input type="time" id="edit-end-${index}" value="${item.end}" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-mono">
-                        <select id="edit-type-${index}" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white">
-                            <option value="lesson" ${item.type === 'lesson' ? 'selected' : ''}>Lekcja</option>
-                            <option value="break" ${item.type === 'break' ? 'selected' : ''}>Przerwa</option>
-                        </select>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function saveScheduleChanges() {
-            const updated = [];
-            for (let i = 0; i < schedule.length; i++) {
-                const name = document.getElementById(`edit-name-${i}`).value;
-                const start = document.getElementById(`edit-start-${i}`).value;
-                const end = document.getElementById(`edit-end-${i}`).value;
-                const type = document.getElementById(`edit-type-${i}`).value;
-
-                if (!name || !start || !end) {
-                    alert('Proszę wypełnić wszystkie pola czasu!');
-                    return;
-                }
-
-                updated.push({ id: i + 1, type, name, start, end });
-            }
-
-            schedule = updated;
-            localStorage.setItem('bell_schedule', JSON.stringify(schedule));
-            toggleEditModal();
-            updateApp();
-        }
-
-        function resetScheduleToDefault() {
-            schedule = DEFAULT_SCHEDULE;
-            localStorage.removeItem('bell_schedule');
             updateApp();
         }
 
